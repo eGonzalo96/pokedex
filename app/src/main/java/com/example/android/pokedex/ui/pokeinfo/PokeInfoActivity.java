@@ -5,6 +5,8 @@ import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,14 +26,17 @@ public class PokeInfoActivity
 
     private TextView nameTextView;
     private TextView idTextView;
-
     private TextView nameTagTextView;
     private TextView idTagTextView;
 
+    private CheckBox shinyChechBox;
+
     private ImageView backImageView;
     private ImageView frontImageView;
-    private PokeInfoPresenter pokeInfoPresenter;
     private ProgressDialog progressDoalog;
+
+    private PokeInfoPresenter pokeInfoPresenter;
+    private Pokemon pokemon;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,6 +49,8 @@ public class PokeInfoActivity
         idTextView = (TextView) findViewById(R.id.text_view_id);
         nameTagTextView = (TextView) findViewById(R.id.tv_nameTag);
         nameTextView = (TextView) findViewById(R.id.text_view_name);
+
+        shinyChechBox = (CheckBox) findViewById(R.id.chbx_shiny);
 
         frontImageView = (ImageView) findViewById(R.id.imageView_frontdefault);
         backImageView = (ImageView) findViewById(R.id.imageView_backdefault);
@@ -60,21 +67,23 @@ public class PokeInfoActivity
         pokeInfoPresenter = new PokeInfoPresenterImplementation(this);
         pokeInfoPresenter.getPokemonInfo(pokemonName);
 
+
+        shinyChechBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setPokemonImage();
+            }
+        });
     }
 
 
     @Override
     public void setPokemonInfoOnScreen(Pokemon pokemon) {
 
+        this.pokemon = pokemon;
         progressDoalog.dismiss();
 
-        Picasso.with(getBaseContext())
-                .load(pokemon.getSpritesURL().getBackDefault())
-                .into(backImageView);
-
-        Picasso.with(getBaseContext())
-                .load(pokemon.getSpritesURL().getFrontDefault())
-                .into(frontImageView);
+        setPokemonImage();
 
         idTagTextView.setVisibility(TextView.VISIBLE);
         idTextView.setText(
@@ -84,6 +93,8 @@ public class PokeInfoActivity
         nameTextView.setText(
                 capitalize(pokemon.getPokemonName())
         );
+
+        shinyChechBox.setVisibility(View.VISIBLE);
     }
 
 
@@ -96,5 +107,28 @@ public class PokeInfoActivity
             Sprites list) {
 
         return list.getBackDefault() + "\n" + list.getFrontDefault();
+    }
+
+
+    private void setPokemonImage() {
+        String frontImage;
+        String backImage;
+
+        if (shinyChechBox.isChecked()) {
+            frontImage = pokemon.getSpritesURL().getFrontShinyDefault();
+            backImage = pokemon.getSpritesURL().getBackShinyDefault();
+        } else {
+            frontImage = pokemon.getSpritesURL().getFrontDefault();
+            backImage = pokemon.getSpritesURL().getBackDefault();
+        }
+
+
+        Picasso.with(getBaseContext())
+                .load(backImage)
+                .into(backImageView);
+
+        Picasso.with(getBaseContext())
+                .load(frontImage)
+                .into(frontImageView);
     }
 }

@@ -4,12 +4,17 @@ import com.google.gson.annotations.SerializedName;
 
 public class Sprites {
 
-    @SerializedName("back_default")
+    @SerializedName("front_default")
     public String frontDefault;
 
-    @SerializedName("front_default")
+    @SerializedName("back_default")
     public String backDefault;
 
+    @SerializedName("back_shiny")
+    public String backShinyDefault;
+
+    @SerializedName("front_shiny")
+    public String frontShinyDefault;
 
     public String getFrontDefault() {
         return frontDefault;
@@ -17,6 +22,14 @@ public class Sprites {
 
     public String getBackDefault() {
         return backDefault;
+    }
+
+    public String getBackShinyDefault() {
+        return backShinyDefault;
+    }
+
+    public String getFrontShinyDefault() {
+        return frontShinyDefault;
     }
 
 }
